@@ -1,0 +1,214 @@
+#include <iostream>
+#include <vector>
+#include <string>
+#include <algorithm> // For std::remove_if and erase
+using namespace std;
+
+// Define a class for Staff (Doctor)
+class Staff {
+public:
+    string username;
+    string password;
+    string name;
+    string role;
+
+    // Constructor to initialize staff object
+    Staff(string u, string p, string n, string r) {
+        username = u;
+        password = p;
+        name = n;
+        role = r;
+    }
+
+    // Function to display staff information
+    void displayStaffInfo() const {
+        cout << "Username: " << username << "\n";
+        cout << "Name: " << name << "\n";
+        cout << "Role: " << role << "\n";
+        cout << "-------------------------\n";
+    }
+};
+
+// Define a class for Patient
+class Patient {
+public:
+    string name;
+    int age;
+    string disease;
+
+    // Constructor to initialize patient object
+    Patient(string n, int a, string d) {
+        name = n;
+        age = a;
+        disease = d;
+    }
+
+    // Function to display patient information
+    void displayPatientInfo() const {
+        cout << "Patient Name: " << name << "\n";
+        cout << "Age: " << age << "\n";
+        cout << "Disease: " << disease << "\n";
+        cout << "-------------------------\n";
+    }
+};
+
+// Function to add a new staff member
+void addStaff(vector<Staff>& staffList) {
+    string username, password, name, role;
+    cout << "Enter Username: ";
+    cin >> username;
+    cout << "Enter Password: ";
+    cin >> password;
+    cout << "Enter Name: ";
+    cin.ignore();  // To clear the newline character in the input buffer
+    getline(cin, name);
+    cout << "Enter Role: ";
+    getline(cin, role);
+    
+    Staff newStaff(username, password, name, role); // Create new Staff object
+    staffList.push_back(newStaff); // Add staff to the list
+    cout << "Staff added successfully!\n";
+}
+
+// Function to view all staff members
+void viewStaff(const vector<Staff>& staffList) {
+    if (staffList.empty()) {
+        cout << "No staff available.\n";
+        return;
+    }
+    cout << "Staff List:\n";
+    for (const auto& staff : staffList) {
+        staff.displayStaffInfo();  // Use the display function of Staff class
+    }
+}
+
+// Function to delete a staff member by username
+void deleteStaff(vector<Staff>& staffList) {
+    string username;
+    cout << "Enter the username of the staff to delete: ";
+    cin >> username;
+
+    auto it = remove_if(staffList.begin(), staffList.end(), 
+                        [username](const Staff& staff) { return staff.username == username; });
+    if (it != staffList.end()) {
+        staffList.erase(it, staffList.end());
+        cout << "Staff member deleted successfully.\n";
+    } else {
+        cout << "Staff member not found.\n";
+    }
+}
+
+// Function to add a new patient
+void addPatient(vector<Patient>& patientList) {
+    string name, disease;
+    int age;
+    cout << "Enter Patient Name: ";
+    cin.ignore();  // To clear the newline character in the input buffer
+    getline(cin, name);
+    cout << "Enter Patient Age: ";
+    cin >> age;
+    cout << "Enter Disease: ";
+    cin.ignore();  // To clear the newline character in the input buffer
+    getline(cin, disease);
+    
+    Patient newPatient(name, age, disease); // Create new Patient object
+    patientList.push_back(newPatient); // Add patient to the list
+    cout << "Patient added successfully!\n";
+}
+
+// Function to view all patients
+void viewPatients(const vector<Patient>& patientList) {
+    if (patientList.empty()) {
+        cout << "No patients available.\n";
+        return;
+    }
+    cout << "Patient List:\n";
+    for (const auto& patient : patientList) {
+        patient.displayPatientInfo();  // Use the display function of Patient class
+    }
+}
+
+// Function to delete a patient by name
+void deletePatient(vector<Patient>& patientList) {
+    string name;
+    cout << "Enter the name of the patient to delete: ";
+    cin.ignore();  // To clear the newline character in the input buffer
+    getline(cin, name);
+
+    auto it = remove_if(patientList.begin(), patientList.end(), 
+                        [name](const Patient& patient) { return patient.name == name; });
+    if (it != patientList.end()) {
+        patientList.erase(it, patientList.end());
+        cout << "Patient deleted successfully.\n";
+    } else {
+        cout << "Patient not found.\n";
+    }
+}
+
+int main() {
+    // Define vectors to store staff and patient information
+    vector<Staff> staffList;
+    vector<Patient> patientList;
+
+    // Main menu for managing staff and patients
+    int choice;
+    while (true) {
+        cout << "\n--- Hospital Management System ---\n";
+        cout << "1. Manage Staff\n";
+        cout << "2. Manage Patients\n";
+        cout << "3. Exit\n";
+        cout << "Enter your choice: ";
+        cin >> choice;
+
+        switch (choice) {
+            case 1:
+                cout << "\n--- Staff Management ---\n";
+                cout << "1. Add Staff\n";
+                cout << "2. View Staff\n";
+                cout << "3. Delete Staff\n";
+                cout << "Enter your choice: ";
+                int staffChoice;
+                cin >> staffChoice;
+
+                if (staffChoice == 1) {
+                    addStaff(staffList);
+                } else if (staffChoice == 2) {
+                    viewStaff(staffList);
+                } else if (staffChoice == 3) {
+                    deleteStaff(staffList);
+                } else {
+                    cout << "Invalid choice.\n";
+                }
+                break;
+
+            case 2:
+                cout << "\n--- Patient Management ---\n";
+                cout << "1. Add Patient\n";
+                cout << "2. View Patients\n";
+                cout << "3. Delete Patient\n";
+                cout << "Enter your choice: ";
+                int patientChoice;
+                cin >> patientChoice;
+
+                if (patientChoice == 1) {
+                    addPatient(patientList);
+                } else if (patientChoice == 2) {
+                    viewPatients(patientList);
+                } else if (patientChoice == 3) {
+                    deletePatient(patientList);
+                } else {
+                    cout << "Invalid choice.\n";
+                }
+                break;
+
+            case 3:
+                cout << "Exiting the system...\n";
+                return 0;
+
+            default:
+                cout << "Invalid choice. Try again.\n";
+        }
+    }
+
+    return 0;
+}
